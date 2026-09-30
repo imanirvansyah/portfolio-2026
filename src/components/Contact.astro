@@ -1,0 +1,33 @@
+---
+import { site } from '../data/site';
+const mailto = `mailto:${site.email}`;
+---
+
+<section class="contact" id="contact" aria-labelledby="contact-title">
+  <p class="label" data-fade>Contact</p>
+  <h2 id="contact-title" class="contact-h">
+    <a class="contact-big" href={mailto} data-mask>
+      <span class="m"><span class="mi">Have something</span></span>
+      <span class="m"><span class="mi">to build?</span></span>
+    </a>
+  </h2>
+  <p class="contact-mail" data-fade><a href={mailto}>{site.email}<span class="rule" aria-hidden="true" data-draw></span></a></p>
+</section>
+
+<style>
+  .contact { padding: clamp(140px, 24vh, 260px) var(--pad) clamp(64px, 10vh, 120px); }
+  .label { margin-bottom: 24px; }
+  .contact-h { margin: 0; }
+  .contact-big {
+    display: inline-block; font-family: var(--display); font-weight: 700; font-size: clamp(56px, 10vw, 176px);
+    line-height: 0.88; letter-spacing: -0.005em; color: var(--ink); text-decoration: none; transition: color 0.4s var(--ease-out);
+  }
+  .contact-big:hover { color: var(--red); }
+  .contact-mail { margin: clamp(24px, 4vh, 40px) 0 0; }
+  .contact-mail a {
+    position: relative; display: inline-block; padding-bottom: 6px;
+    font-size: clamp(17px, 1.4vw, 21px); color: var(--text); text-decoration: none;
+  }
+  .contact-mail .rule { top: auto; bottom: 0; background: var(--text); opacity: 0.4; }
+  .contact-mail a:hover { color: var(--red); }
+</style>

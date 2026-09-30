@@ -1,0 +1,139 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import ProjectMedia from '../../components/ProjectMedia.astro';
+import Base from '../../layouts/Base.astro';
+import SmokeCanvas from '../../components/SmokeCanvas.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('work', ({ data }) => data.caseStudy && !data.draft)).sort((a, b) => a.data.order - b.data.order);
+  return entries.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, next: entries.length > 1 ? entries[(i + 1) % entries.length] : null },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  next: CollectionEntry<'work'> | null;
+}
+
+const { entry, next } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: d.title,
+  description: d.description,
+  url: new URL(`/work/${entry.id}/`, Astro.site).href,
+  author: { '@type': 'Person', name: site.name, url: site.url },
+};
+---
+
+<Base title={d.title} description={d.description} jsonLd={jsonLd}>
+  <SmokeCanvas />
+  <Nav />
+  <div class="page">
+    <main>
+      <header class="cs-head">
+        <p class="label" data-page-intro><a href="/#work">Selected work</a></p>
+        <h1 class="cs-title" data-page-title><span class="m"><span class="mi">{d.title}</span></span></h1>
+        <dl class="cs-meta" data-page-intro>
+          <div><dt>Type</dt><dd>{d.type}</dd></div>
+          {d.year && <div><dt>Year</dt><dd>{d.year}</dd></div>}
+          {
+            d.links.length > 0 && (
+              <div>
+                <dt>Live</dt>
+                <dd class="links">{d.links.map((l) => <a href={l.href}>{l.label}</a>)}</dd>
+              </div>
+            )
+          }
+        </dl>
+      </header>
+
+      <figure class="cs-cover" data-ratio={d.ratio} data-page-intro style={`--tone:${d.tone}`}>
+        {
+          d.media || d.cover ? (
+            <ProjectMedia data={d} alt={`${d.title}, cover`} widths={[640, 1024, 1600]} sizes="(max-width: 760px) 100vw, 80vw" eager />
+          ) : (
+            <span class="ph">{d.placeholder ?? '[Cover image]'}</span>
+          )
+        }
+      </figure>
+
+      <div class="panel cs-panel" data-panel>
+      <article class="prose">
+        <Content />
+      </article>
+
+      {
+        next && (
+          <nav class="cs-next" aria-label="Next project">
+            <span class="rule" aria-hidden="true" data-draw />
+            <p class="label">Next project</p>
+            <a class="next-link" href={`/work/${next.id}/`} data-mask><span class="m"><span class="mi">{next.data.title}</span></span></a>
+          </nav>
+        )
+      }
+      </div>
+    </main>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .cs-head { padding: clamp(140px, 22vh, 220px) var(--pad) clamp(32px, 6vh, 56px); }
+  .cs-head .label a { color: var(--muted); text-decoration: none; }
+  .cs-head .label a:hover { color: var(--text); }
+  .cs-title {
+    margin: 18px 0 0; font-family: var(--display); font-weight: 700; font-size: clamp(64px, 11vw, 190px);
+    line-height: 0.86; letter-spacing: -0.005em; color: var(--ink);
+  }
+  .cs-meta { display: flex; flex-wrap: wrap; gap: 16px 56px; margin: clamp(28px, 5vh, 48px) 0 0; }
+  .cs-meta dt { font-size: 13px; color: var(--muted); }
+  .cs-meta dd { margin: 4px 0 0; color: var(--text); }
+  .links { display: flex; flex-wrap: wrap; gap: 0 18px; }
+  .links a { color: var(--text); text-underline-offset: 4px; }
+  .links a:hover { color: var(--red); }
+
+  .cs-cover {
+    position: relative; margin: 0 auto; width: min(calc(100% - 2 * var(--pad)), calc(82vh * 1.6)); overflow: hidden; border-radius: 8px;
+    border: 1px solid rgba(237, 220, 224, 0.08);
+    background: radial-gradient(120% 90% at 28% 18%, var(--tone) 0%, #1a0708 58%, #0a0405 100%);
+  }
+  .cs-cover[data-ratio='16:10'] { aspect-ratio: 16 / 10; }
+  .cs-cover[data-ratio='9:16'], .cs-cover[data-ratio='4:5'], .cs-cover[data-ratio='1:1'] { aspect-ratio: 16 / 10; }
+  .cs-cover :global(picture) { display: contents; }
+  .cs-cover :global(img), .cs-cover :global(video) { width: 100%; height: 100%; object-fit: cover; }
+  .cs-cover:not([data-ratio='16:10']) :global(img), .cs-cover:not([data-ratio='16:10']) :global(video) { object-fit: contain; }
+  .ph { position: absolute; left: 24px; top: 20px; font-size: 13px; color: var(--muted); }
+
+  .cs-panel { margin-top: clamp(64px, 12vh, 120px); }
+  .prose { max-width: 68ch; margin: 0 auto; padding: clamp(110px, 18vh, 200px) var(--pad) 0; font-size: clamp(17px, 1.25vw, 19px); line-height: 1.65; }
+  .prose :global(h2) { margin: 2.4em 0 0.6em; font-family: var(--display); font-weight: 700; font-size: clamp(32px, 3.4vw, 52px); line-height: 0.95; color: var(--ink); }
+  .prose :global(h2:first-child) { margin-top: 0; }
+  .prose :global(p) { margin: 0 0 1em; font-weight: 300; }
+  .prose :global(blockquote) { margin: 0 0 2em; padding: 0 0 0 18px; border-left: 2px solid var(--red); color: var(--muted); }
+  .prose :global(a) { color: var(--text); text-underline-offset: 4px; }
+  .prose :global(img), .prose :global(video) { display: block; width: 100%; height: auto; border-radius: 6px; margin: 2em 0; }
+  .prose :global(figure) { margin: 2.4em 0; }
+  .prose :global(figure img), .prose :global(figure video) { margin: 0; }
+  .prose :global(figcaption) { margin-top: 10px; font-size: 14px; color: var(--muted); }
+
+  .cs-next { position: relative; margin: clamp(96px, 16vh, 180px) var(--pad) 0; padding-top: 20px; }
+  .next-link {
+    display: inline-block; margin-top: 12px; font-family: var(--display); font-weight: 700; font-size: clamp(56px, 9vw, 160px);
+    line-height: 0.88; color: var(--ink); text-decoration: none; transition: color 0.4s var(--ease-out);
+  }
+  .next-link:hover { color: var(--red); }
+</style>
+
+<script>
+  import { bootPage } from '../../scripts/boot';
+  bootPage();
+</script>

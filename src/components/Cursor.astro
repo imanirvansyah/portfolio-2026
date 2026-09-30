@@ -1,0 +1,41 @@
+---
+/**
+ * Custom cursor (mouse and trackpad only; touch devices keep nothing extra).
+ * States: "scroll" (default), "drag" (over [data-cursor="drag"]), "link" (over links and buttons).
+ * Driven by scripts/cursor.ts. The native cursor is hidden only after the script has started.
+ */
+---
+
+<div class="cursor" aria-hidden="true">
+  <span class="ring"></span>
+  <span class="carets"><i class="caret up"></i><i class="caret down"></i></span>
+  <span class="label">
+    <span class="word" data-word="scroll">Scroll</span>
+    <span class="word" data-word="drag">Drag</span>
+  </span>
+</div>
+
+<style>
+  :global(html.has-cursor),
+  :global(html.has-cursor *) { cursor: none !important; }
+
+  .cursor {
+    position: fixed; left: 0; top: 0; z-index: 100; width: 66px; height: 66px; margin: -33px 0 0 -33px;
+    pointer-events: none; opacity: 0; visibility: hidden;
+  }
+  .ring { position: absolute; inset: 0; border: 1px solid rgba(237, 220, 224, 0.34); border-radius: 50%; }
+  .carets { position: absolute; inset: 0; }
+  .caret {
+    position: absolute; left: 50%; width: 7px; height: 5px; margin-left: -3.5px;
+    background: rgba(237, 220, 224, 0.55); clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+  .caret.up { top: 8px; }
+  .caret.down { bottom: 8px; transform: rotate(180deg); }
+  .label { position: absolute; left: 0; right: 0; top: 50%; height: 14px; margin-top: -7px; overflow: hidden; }
+  .word {
+    position: absolute; left: 0; right: 0; top: 0; text-align: center;
+    font: 400 10px/14px var(--body); letter-spacing: 0.06em; color: rgba(237, 220, 224, 0.72);
+  }
+  /* The hidden word's starting offset is set by cursor.ts, not here: a CSS transform on an element GSAP
+     animates gets parsed into its pixel offset and the tween never lands (see CLAUDE.md, one owner per transform). */
+</style>

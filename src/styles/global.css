@@ -1,0 +1,105 @@
+/* =========================================================
+   Tokens
+   ========================================================= */
+:root {
+  --bg: #03070c;
+  --ink: #bdb5ba;       /* display type */
+  --text: #b5aeb2;      /* body copy */
+  --muted: #8c8489;
+  --red: #e5575b;
+  --rule: rgba(189, 181, 186, 0.2);
+  --pill: rgba(58, 14, 18, 0.38);
+  --pill-line: rgba(237, 220, 224, 0.16);
+  --curtain: #2c0d10;
+  --panel: #0d0a0c;     /* solid ground for heavy-text sections */
+
+  /* Big Shoulders is self-hosted with the optical-size axis; large sizes get the display cut automatically.
+     Segoe UI is a Windows system font (not licensed for web embedding); everyone else gets Noto Sans. */
+  --display: 'Big Shoulders Variable', 'Arial Narrow', sans-serif;
+  --body: 'Segoe UI', 'Noto Sans Variable', system-ui, -apple-system, sans-serif;
+
+  --pad: clamp(20px, 3.2vw, 48px);
+  --fs-hero: clamp(52px, 5.8vw, 96px);
+  --fs-h2: clamp(48px, 7vw, 120px);
+  --fs-row: clamp(44px, 6vw, 104px);
+
+  /* Same curves as the GSAP tokens in scripts/motion.ts, for CSS transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.76, 0, 0.24, 1);
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) { --bg: #03070c; --ink: #bdb5ba; --text: #b5aeb2; --muted: #8c8489; --red: #e5575b; }
+}
+:root[data-theme='dark'] { --bg: #03070c; --ink: #bdb5ba; --text: #b5aeb2; --muted: #8c8489; --red: #e5575b; }
+
+/* =========================================================
+   Base
+   ========================================================= */
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.no-smoke body { background: radial-gradient(90% 70% at 50% 49%, #703030 0%, #2a1214 45%, #03070c 100%) fixed; }
+img, video { max-width: 100%; display: block; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; border-radius: 2px; }
+
+.page { position: relative; z-index: 1; overflow-x: clip; }
+
+/* =========================================================
+   Motion primitives
+   A masked line: the outer .m clips, the inner .mi is the only thing GSAP moves.
+   Never put a CSS transition on transform of an element GSAP animates.
+   ========================================================= */
+.m { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.mi { display: block; will-change: transform; }
+
+.rule {
+  position: absolute; left: 0; right: 0; top: 0; height: 1px;
+  background: var(--rule); transform-origin: left center;
+}
+
+/* Hidden until the intro timeline takes over; the inline head script removes this after 3s regardless. */
+.motion-wait [data-intro] { visibility: hidden; }
+
+/* =========================================================
+   Solid panel: heavy-text sections sit on this instead of the smoke.
+   The entrance/exit mask is scrubbed by panels() in scripts/motion.ts.
+   ========================================================= */
+.panel {
+  position: relative;
+  background: var(--panel);
+  padding-bottom: clamp(160px, 22vh, 240px);
+  will-change: clip-path;
+}
+
+/* =========================================================
+   Shared type
+   ========================================================= */
+.label { margin: 0; font-size: 14px; font-weight: 400; color: var(--muted); }
+.h2 {
+  margin: 0; font-family: var(--display); font-weight: 700; font-size: var(--fs-h2);
+  line-height: 0.9; letter-spacing: -0.005em; color: var(--ink);
+}
+.sec { padding: clamp(110px, 18vh, 200px) var(--pad) 0; }
+.sec-head {
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap;
+  margin-bottom: clamp(28px, 5vh, 56px);
+}
+.sec-note { margin: 0 0 0.6em; max-width: 36ch; font-weight: 300; color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

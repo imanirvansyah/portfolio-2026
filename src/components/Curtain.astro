@@ -1,0 +1,31 @@
+---
+import { site } from '../data/site';
+/** Entrance frame (home only). Opened by the intro timeline; opens itself via CSS if scripts never run. */
+---
+
+<div class="curtain" aria-hidden="true">
+  <p class="curtain-mark"><span class="m"><span class="mi"><b>{site.firstName}</b><span class="light">{site.lastName}</span></span></span></p>
+  <div class="curtain-meta"><span>Loading</span><span id="curtainCount">[0%]</span></div>
+</div>
+
+<style>
+  .curtain {
+    position: fixed; inset: 0; z-index: 50; display: none; place-items: center;
+    background: var(--curtain); color: var(--ink); pointer-events: none;
+    animation: curtain-fallback 0.9s var(--ease-inout) 3.6s forwards;
+  }
+  :global(.motion) .curtain { display: grid; }
+  @keyframes curtain-fallback { to { transform: translateY(-100%); visibility: hidden; } }
+  .curtain-mark {
+    margin: 0; font-family: var(--display); font-size: clamp(64px, 11vw, 168px);
+    line-height: 0.9; letter-spacing: 0.002em; white-space: nowrap;
+  }
+  .curtain-mark b { font-weight: 800; color: var(--ink); }
+  .light { font-weight: 300; color: var(--muted); }
+  .curtain-meta {
+    position: absolute; left: var(--pad); right: var(--pad); bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
+    display: flex; justify-content: space-between; font-size: 13px; color: var(--muted);
+  }
+  .curtain-meta span { font-variant-numeric: tabular-nums; }
+  @media (max-width: 760px) { .curtain-mark { font-size: 17vw; } }
+</style>

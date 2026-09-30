@@ -1,0 +1,30 @@
+---
+import { site } from '../data/site';
+---
+
+<header class="nav" data-intro>
+  <a class="brand" href="/"><b>{site.firstName}</b>{site.lastName}</a>
+  <nav aria-label="Main">
+    <a href="/#work">Work</a>
+    <a href="/#contact">Contact</a>
+  </nav>
+</header>
+
+<style>
+  .nav {
+    position: fixed; z-index: 5; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 28px); transform: translateX(-50%);
+    width: min(458px, calc(100% - 32px)); height: 37px; padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    border: 1px solid var(--pill-line); border-radius: 19px; background: var(--pill);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+  a { color: var(--muted); text-decoration: none; font-size: 14px; min-height: 37px; display: inline-flex; align-items: center; transition: color 0.3s var(--ease-out); }
+  a:hover { color: var(--text); }
+  .brand { font-weight: 300; }
+  .brand b { font-weight: 600; color: var(--text); }
+  nav { display: flex; gap: 32px; }
+  @media (max-width: 760px) {
+    .nav { top: calc(env(safe-area-inset-top, 0px) + 16px); padding: 0 18px; }
+    nav { gap: 22px; }
+  }
+</style>

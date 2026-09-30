@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+/**
+ * The visual for a project, in priority order:
+ *   media (from /public)  video → <video>, gif/png/jpg/… → <img> served as-is
+ *   cover (src/assets)    optimised <Image>
+ * Videos never use the autoplay attribute: scripts/media.ts plays them only while on screen and never
+ * for reduced-motion visitors. GIFs fall back to `poster` for reduced motion through <picture>.
+ */
+interface Props {
+  data: CollectionEntry<'work'>['data'];
+  /** Empty for decorative use (the card already names the project). */
+  alt?: string;
+  widths: number[];
+  sizes: string;
+  eager?: boolean;
+}
+
+const { data, alt = '', widths, sizes, eager = false } = Astro.props;
+const isVideo = data.media ? /\.(mp4|webm|mov)$/i.test(data.media) : false;
+const type = data.media?.toLowerCase().endsWith('.webm') ? 'video/webm' : data.media?.toLowerCase().endsWith('.mov') ? 'video/quicktime' : 'video/mp4';
+const loading = eager ? 'eager' : 'lazy';
+---
+
+{
+  data.media ? (
+    isVideo ? (
+      <video
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster={data.poster}
+        data-autoplay
+        aria-label={alt || undefined}
+        aria-hidden={alt ? undefined : 'true'}
+        draggable="false"
+      >
+        <source src={data.media} type={type} />
+      </video>
+    ) : (
+      <picture>
+        {data.poster && <source srcset={data.poster} media="(prefers-reduced-motion: reduce)" />}
+        <img src={data.media} alt={alt} loading={loading} decoding="async" draggable="false" />
+      </picture>
+    )
+  ) : data.cover ? (
+    <Image src={data.cover} alt={alt} widths={widths} sizes={sizes} loading={loading} decoding="async" draggable="false" />
+  ) : null
+}

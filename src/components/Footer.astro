@@ -1,0 +1,45 @@
+---
+import { site, liveSocials } from '../data/site';
+const year = new Date().getFullYear();
+const socials = liveSocials();
+---
+
+<footer class="site-foot">
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="tickerTrack">
+      <span class="tick">
+        <span><b>{site.firstName}</b><span class="light">{site.lastName}</span></span><i></i>
+        {site.tickerWords.map((w) => <><span>{w}</span><i></i></>)}
+      </span>
+    </div>
+  </div>
+  <div class="foot-row">
+    <nav aria-label="Footer">
+      <a href="/#work">Work</a>
+      <a href="/#services">What I do</a>
+      <a href="/#experience">Experience</a>
+      {socials.map((s) => <a href={s.href} rel="me">{s.label}</a>)}
+    </nav>
+    <p>© {year} {site.name}</p>
+  </div>
+</footer>
+
+<style>
+  .site-foot { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); }
+  .ticker { overflow: hidden; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: clamp(10px, 2vh, 18px) 0; }
+  .ticker-track { display: flex; align-items: center; width: max-content; will-change: transform; }
+  .tick {
+    flex: none; display: flex; align-items: center; gap: clamp(20px, 3vw, 48px); padding-right: clamp(20px, 3vw, 48px);
+    font-family: var(--display); font-weight: 800; font-size: clamp(64px, 11vw, 190px); line-height: 0.9; color: var(--ink); white-space: nowrap;
+  }
+  .light { font-weight: 300; color: var(--muted); }
+  .tick i { display: block; width: 0.16em; height: 0.16em; border-radius: 50%; background: var(--red); }
+  .foot-row {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px 24px;
+    padding: 18px var(--pad) 0; font-size: 14px; color: var(--muted);
+  }
+  nav { display: flex; flex-wrap: wrap; gap: 0 24px; }
+  a { color: var(--muted); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+  a:hover { color: var(--text); }
+  p { margin: 0; }
+</style>

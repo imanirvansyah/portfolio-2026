@@ -1,0 +1,42 @@
+---
+import { services, servicesNote } from '../data/services';
+---
+
+<section class="sec" id="services" aria-labelledby="svc-title">
+  <div class="sec-head">
+    <h2 class="h2" id="svc-title" data-mask><span class="m"><span class="mi">What I do</span></span></h2>
+    <p class="sec-note" data-lines>{servicesNote}</p>
+  </div>
+  <ul class="svc" data-rows>
+    {
+      services.map((s) => (
+        <li class:list={['svc-row', { 'is-soon': s.status === 'exploring' }]}>
+          <span class="rule" aria-hidden="true" />
+          <h3 class="svc-name m"><span class="mi">{s.name}</span></h3>
+          <p class="svc-desc" data-row-meta>
+            {s.status === 'exploring' && <span class="soon">Exploring</span>}
+            {s.description}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .svc { list-style: none; margin: 0; padding: 0; }
+  .svc-row {
+    position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+    align-items: baseline; column-gap: 40px; padding: 18px 0 16px;
+  }
+  .svc-row:last-child { border-bottom: 1px solid var(--rule); }
+  .svc-name { margin: 0; font-family: var(--display); font-weight: 700; font-size: var(--fs-row); line-height: 0.92; color: var(--ink); }
+  .svc-desc { margin: 0; font-weight: 300; color: var(--text); }
+  .is-soon .svc-name { color: var(--muted); opacity: 0.55; }
+  .is-soon .svc-desc { color: var(--muted); }
+  .soon {
+    display: inline-block; margin-right: 10px; padding: 2px 10px; border: 1px solid var(--rule);
+    border-radius: 12px; font-size: 12px; font-weight: 400; color: var(--text);
+  }
+  @media (max-width: 760px) { .svc-row { grid-template-columns: minmax(0, 1fr); row-gap: 10px; } }
+</style>

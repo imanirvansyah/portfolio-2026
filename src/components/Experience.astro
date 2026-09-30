@@ -1,0 +1,70 @@
+---
+import { experience } from "../data/experience";
+---
+
+<section class="sec" id="experience" aria-labelledby="exp-title">
+  <div class="sec-head">
+    <h2 class="h2" id="exp-title" data-mask>
+      <span class="m"><span class="mi">Experience</span></span>
+    </h2>
+  </div>
+  <ul class="exp" data-rows>
+    {
+      experience.map((r) => (
+        <li class="exp-row">
+          <span class="rule" aria-hidden="true" />
+          <span class="exp-years" data-row-meta>
+            {r.years}
+          </span>
+          <span class="exp-role m">
+            <span class="mi">{r.role}</span>
+          </span>
+          <span class="exp-where" data-row-meta>
+            {r.where}
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .exp {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .exp-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(120px, 200px) minmax(0, 1fr) minmax(0, 360px);
+    align-items: baseline;
+    column-gap: 32px;
+    padding: 20px 0 18px;
+  }
+  .exp-row:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+  .exp-years {
+    font-size: 14px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .exp-role {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(32px, 3.6vw, 60px);
+    line-height: 0.95;
+    color: var(--ink);
+  }
+  .exp-where {
+    font-weight: 300;
+    color: var(--text);
+  }
+  @media (max-width: 760px) {
+    .exp-row {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 6px;
+    }
+  }
+</style>
