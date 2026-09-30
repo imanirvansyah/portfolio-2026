@@ -26,7 +26,7 @@ export const site = {
   headline: ['I design what I know', 'can be built.'],
   intro:
     'I’m Iman, a UI/UX designer who spent years as a frontend developer. Everything here comes with two sides: the design, and how it gets built.',
-  email: 'irvansyah.iman@gmail.com',
+  email: 'imanirvansyaah@gmail.com',
   socials,
   /** Words that scroll in the footer ticker, after the name. */
   tickerWords: ['Design', 'Development'],
